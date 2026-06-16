@@ -55,6 +55,14 @@ Monthly crime counts aggregated by neighborhood (Area Name).
 
 The total number of crimes reported within a neighborhood during a specific month.
 
+## Historical Crime Trends (2020–2024)
+
+The chart below shows total monthly crime activity across Los Angeles from 2020–2024.
+
+![Monthly Crime Trend](images/monthlycrime.png)
+
+Crime activity remained relatively stable between 2020 and 2023 before declining significantly in 2024. This trend highlights the importance of forecasting future crime activity rather than relying solely on historical observations.
+
 ---
 
 # Project Pipeline
