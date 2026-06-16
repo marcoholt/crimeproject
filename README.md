@@ -77,6 +77,13 @@ The raw crime dataset was cleaned and prepared by:
 - Extracting temporal information
 - Aggregating crimes into monthly neighborhood-level counts
 
+## Neighborhood Crime Distribution
+
+Crime levels vary substantially across Los Angeles neighborhoods.
+
+![Neighborhood Crime Heatmap](images/neighboorhoodcrime.png)
+
+The heatmap reveals that neighborhoods such as Central, Pacific, Southwest, and North Hollywood consistently experienced higher crime volumes, while areas such as Foothill and West Valley generally reported lower crime activity. These differences reinforce the need for neighborhood-level forecasting rather than city-wide averages.
 ---
 
 ## 2. Feature Engineering
@@ -166,6 +173,9 @@ Additional feature engineering significantly improved model generalization.
 
 The additional lag and seasonality features improved the model's ability to generalize to unseen future data, increasing predictive performance by approximately **16%**.
 
+### Performance Improvement Visualization
+
+![Feature Engineering Impact](images/featureengineering.png)
 ---
 
 # Modeling Approach
@@ -225,7 +235,11 @@ Forecasting model developed by Meta.
 | SARIMA           | 464.55 | 524.62 | -4.70    |
 | Prophet          | 486.34 | 539.48 | -4.98    |
 
+### Model Performance Comparison
 
+![Model Comparison](images/modelcompairson.png)
+
+Ridge Regression achieved the strongest holdout-year performance, substantially outperforming Random Forest, XGBoost, and traditional time-series forecasting approaches.
 ---
 
 # Key Findings
@@ -306,7 +320,12 @@ This does not necessarily eliminate investment opportunities but suggests increa
 | 77th Street  | 163.69            | 1,964           |
 | Mission      | 171.67            | 2,060           |
 
+## 2025 Investment Risk Rankings
 
+![2025 Crime Forecasts](images/predictedneighboorhoodcrime.png)
+
+The visualization summarizes the neighborhoods forecasted to experience the highest and lowest crime activity in 2025. These rankings provide a practical framework for identifying areas that may warrant additional due diligence or represent potential investment opportunities.
+s
 ### Business Interpretation
 
 These neighborhoods are forecasted to experience comparatively lower crime activity in 2025 and may represent attractive investment opportunities when combined with favorable economic and housing indicators.
