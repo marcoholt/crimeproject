@@ -1,574 +1,442 @@
-# Urban Safety Risk Forecasting for Real Estate Investment
+# Urban Safety Risk Forecasting for Real Estate Investment Decisions
 
-## Overview
+## Project Overview
 
-Real estate investment decisions are heavily influenced by neighborhood safety. Crime trends can affect property values, rental demand, insurance costs, tenant retention, and long-term investment performance. Investors often rely on historical observations and subjective assessments when evaluating neighborhoods, which can lead to missed opportunities or increased risk exposure.
+Real estate investment decisions are heavily influenced by neighborhood safety, crime trends, and long-term community stability. Areas experiencing increasing crime activity may face declining property values, reduced tenant demand, higher insurance costs, and increased investment risk.
 
-This project develops a machine learning forecasting solution that predicts future neighborhood crime activity in Los Angeles using historical crime data. The goal is to provide data-driven insights that help real estate investors identify safer investment opportunities and avoid neighborhoods exhibiting increasing crime risk.
+Morro's Real Estate Investment Firm wanted a data-driven approach to evaluate crime trends across Los Angeles neighborhoods and identify areas that may become safer or riskier over time.
+
+This project leverages historical crime data from Los Angeles (2020–2024) to forecast future crime activity and provide actionable investment insights. The final solution combines time-aware feature engineering, machine learning forecasting, and business-focused recommendations to support smarter real estate acquisition decisions.
 
 ---
 
 ## Business Problem
 
-### Problem Statement
+### Challenge
 
-Morro's Real Estate Investment Firm wants to make more informed investment decisions by understanding which Los Angeles neighborhoods are becoming safer or riskier over time.
+Traditional real estate analysis often relies on historical crime reports without considering future crime trends.
 
-Crime activity directly impacts:
+This creates several risks:
 
-- Property values
-- Rental demand
-- Tenant retention
-- Insurance costs
-- Long-term investment returns
-- Overall neighborhood desirability
-
-Without predictive insights, investment decisions may rely on historical observations rather than future risk forecasts.
+- Investing in neighborhoods where crime is increasing.
+- Missing opportunities in neighborhoods becoming safer.
+- Relying on subjective judgment instead of data-driven forecasts.
+- Increased exposure to declining property values and tenant demand.
 
 ### Business Question
 
-> Can historical crime data be used to forecast future neighborhood crime activity and support real estate investment decisions?
+**Can historical crime data be used to forecast future neighborhood crime activity and identify areas with elevated investment risk?**
 
----
+### Business Value
 
-## Business Value
+This solution helps Morro's:
 
-This project helps investors:
-
-### Identify Lower-Risk Investment Opportunities
-
-Forecasting future crime activity allows investors to prioritize neighborhoods expected to remain stable or improve over time.
-
-### Reduce Investment Risk
-
-Neighborhoods with increasing crime trends may experience declining property values and lower tenant demand.
-
-### Support Data-Driven Decisions
-
-Rather than relying on intuition, investors can leverage historical patterns and predictive analytics when evaluating investment opportunities.
-
-### Improve Portfolio Performance
-
-Allocating capital toward lower-risk neighborhoods can potentially improve long-term portfolio returns.
+- Identify safer neighborhoods for investment.
+- Avoid neighborhoods experiencing increasing crime activity.
+- Prioritize due diligence efforts.
+- Improve portfolio risk management.
+- Support data-driven acquisition strategies.
 
 ---
 
 # Dataset
 
-## Data Source
+### Source
 
-### Los Angeles Crime Data (2020–2024)
+Los Angeles Crime Data (2020–2024)
 
-Publicly available crime incident data containing reported crimes across Los Angeles neighborhoods.
+### Unit of Analysis
 
-Key fields include:
-
-- Crime occurrence date
-- Neighborhood (Area Name)
-- Crime classification
-- Victim demographics
-- Location information
-- Time information
-
----
-
-## Data Preparation
-
-### Initial Cleaning
-
-The following steps were performed:
-
-- Removed duplicate records
-- Checked for missing values
-- Converted date fields into datetime format
-- Standardized column names
-- Removed irrelevant identifiers and administrative fields
-
-Removed fields included:
-
-```text
-DR_NO
-LOCATION
-Cross Street
-Crm Cd 2
-Crm Cd 3
-Crm Cd 4
-Status
-Status Desc
-```
-
-These fields were excluded because they provided little predictive value for neighborhood-level crime forecasting.
-
----
-
-## Time Feature Creation
-
-Several date-based features were extracted:
-
-```text
-Year
-Month
-DayOfWeek
-Hour
-```
-
-These features help capture temporal crime patterns.
-
----
-
-# Exploratory Data Analysis
-
-Several analyses were conducted to understand crime patterns across time and geography.
-
-### Annual Crime Trends
-
-Crime activity varied across years, revealing meaningful changes in neighborhood crime behavior.
-
-### Monthly Trends
-
-Crime activity exhibited seasonal fluctuations throughout the year.
-
-### Neighborhood Analysis
-
-Significant differences in crime volume were observed between neighborhoods.
-
-### Temporal Patterns
-
-Crime frequency varied across:
-
-- Months
-- Days of the week
-- Hours of the day
-
-These findings supported the inclusion of temporal forecasting features.
-
----
-
-# Feature Engineering
-
-A neighborhood-month level forecasting dataset was created by aggregating crime incidents.
+Monthly crime counts aggregated by neighborhood (Area Name).
 
 ### Target Variable
 
-```text
-crime_count
-```
+`crime_count`
 
-Represents the total number of crimes occurring within a neighborhood during a given month.
+The total number of crimes reported within a neighborhood during a specific month.
 
 ---
 
-## Forecasting Features
+# Project Pipeline
 
-### previous_crime_count
+## 1. Data Cleaning
 
-Captures the prior month's crime activity and provides immediate historical context.
+The raw crime dataset was cleaned and prepared by:
 
-### rolling_average
-
-Calculates the average crime count over the previous three months.
-
-Helps smooth short-term fluctuations and identify persistent patterns.
-
-### crime_trend
-
-Measures month-to-month changes in crime activity.
-
-Allows the model to detect increasing or decreasing crime trends.
+- Removing duplicate records
+- Handling missing values
+- Converting dates into datetime format
+- Extracting temporal information
+- Aggregating crimes into monthly neighborhood-level counts
 
 ---
 
-## Additional Feature Engineering
+## 2. Feature Engineering
 
-To improve forecasting performance and model generalization, several additional temporal features were engineered.
+To improve forecasting performance, several time-based features were engineered.
 
-### Lag Features
+### Previous Crime Count
 
-```text
-lag_1
-lag_3
-lag_6
-lag_12
-```
+`previous_crime_count`
 
-These features capture crime activity from previous months and allow the model to learn short-term and long-term historical dependencies.
+Captures crime activity from the prior month.
 
-### Rolling Averages
+**Business Value:**
 
-```text
-rolling_3
-rolling_6
-rolling_12
-```
+Crime levels often exhibit momentum. Areas experiencing elevated crime today frequently continue experiencing elevated crime in the near future.
 
-These features smooth random fluctuations and reveal underlying crime trends.
+---
 
-### Cyclical Seasonality Features
+### Rolling Average
 
-```text
-month_sin
-month_cos
-```
+`rolling_average`
 
-These features allow the model to understand that months occur in a repeating annual cycle.
+Three-month moving average of crime activity.
 
-For example:
+**Business Value:**
 
-```text
-December and January are close together
-```
+Smooths short-term fluctuations and captures underlying crime patterns.
 
-rather than being numerically distant.
+---
+
+### Crime Trend
+
+`crime_trend`
+
+Month-over-month change in crime volume.
+
+**Business Value:**
+
+Helps identify neighborhoods where crime is increasing or decreasing.
+
+---
+
+### Additional Forecasting Features
+
+Additional lag and seasonality features were engineered:
+
+- lag_1
+- lag_3
+- lag_6
+- lag_12
+- rolling_3
+- rolling_6
+- rolling_12
+- month_sin
+- month_cos
+
+These features helped the model capture:
+
+- Long-term trends
+- Seasonal patterns
+- Historical crime momentum
+- Neighborhood-specific behavior
+
+---
+
+## Feature Engineering Impact
+
+Additional feature engineering significantly improved model generalization.
+
+### Before Additional Features
+
+
+| Model            | Holdout R² |
+| ---------------- | ---------- |
+| Ridge Regression | 0.44       |
+
+
+### After Additional Features
+
+
+| Model            | Holdout R² |
+| ---------------- | ---------- |
+| Ridge Regression | 0.51       |
+
+
+### Key Finding
+
+The additional lag and seasonality features improved the model's ability to generalize to unseen future data, increasing predictive performance by approximately **16%**.
 
 ---
 
 # Modeling Approach
 
-## Forecasting Strategy
+Because the objective was forecasting future crime activity, a chronological train-test split was used.
 
-Unlike traditional random train-test splits, forecasting requires preserving chronological order.
+### Training Period
 
-### Training Data
+2020–2023
 
-```text
-2020
-2021
-2022
-2023
-```
+### Testing Period
 
-### Testing Data
-
-```text
 2024
-```
 
-This simulates a real-world forecasting scenario where future data is unavailable during training.
-
----
-
-# Machine Learning Pipeline
-
-A reproducible Scikit-Learn pipeline was implemented using:
-
-```python
-ColumnTransformer
-Pipeline
-SimpleImputer
-StandardScaler
-OneHotEncoder
-```
-
-Benefits:
-
-- Consistent preprocessing
-- Reduced data leakage
-- Reproducibility
-- Production-ready workflow
+This prevents future information from leaking into the training process and better simulates real-world forecasting.
 
 ---
 
-# Models Evaluated
+## Models Evaluated
 
-## Linear Regression
+### Linear Regression
 
-Baseline forecasting model.
-
----
-
-## Ridge Regression
-
-Regularized linear regression model designed to reduce overfitting and improve generalization.
-
----
-
-## Random Forest Regressor
-
-Ensemble tree-based model capable of capturing nonlinear relationships.
-
----
-
-## XGBoost Regressor
-
-Gradient boosting model optimized for predictive performance.
-
----
-
-## Traditional Forecasting Models
-
-### SARIMA
-
-Evaluated to determine whether classical time-series forecasting could outperform machine learning models.
-
-### Prophet
-
-Evaluated to compare modern forecasting methods against feature-engineered machine learning approaches.
-
----
-
-# Hyperparameter Tuning
-
-Hyperparameter optimization was performed using:
-
-```python
-GridSearchCV
-TimeSeriesSplit
-```
-
-This ensured model tuning respected chronological ordering and prevented future data leakage.
-
----
-
-# Evaluation Metrics
-
-The following metrics were used:
-
-## MAE (Mean Absolute Error)
-
-Measures average prediction error.
-
-Lower values indicate better performance.
-
----
-
-## RMSE (Root Mean Squared Error)
-
-Penalizes larger prediction errors.
-
-Lower values indicate better performance.
-
----
-
-## R² (Coefficient of Determination)
-
-Measures the percentage of variation explained by the model.
-
-Higher values indicate better predictive performance.
-
----
-
-# Results
-
-## Best Performing Model
+Baseline regression model.
 
 ### Ridge Regression
 
-Final Performance:
+Regularized version of Linear Regression that reduces overfitting.
 
-```text
-R² = 0.51
-```
+### Random Forest Regressor
 
-This means the model explains approximately:
+Tree-based ensemble model.
 
-```text
-51% of future neighborhood crime variation
-```
+### XGBoost Regressor
 
-using historical crime patterns.
+Gradient boosting model.
+
+### SARIMA
+
+Classical time-series forecasting model.
+
+### Prophet
+
+Forecasting model developed by Meta.
 
 ---
 
-# Model Comparison
+# Model Evaluation
+
+## Final Holdout-Year Results (2024)
 
 
-| Model            | R²    |
-| ---------------- | ----- |
-| Ridge Regression | 0.51  |
-| Random Forest    | 0.01  |
-| XGBoost          | -0.12 |
-| SARIMA           | -4.70 |
-| Prophet          | -4.98 |
+| Model            | MAE    | RMSE   | R²       |
+| ---------------- | ------ | ------ | -------- |
+| Ridge Regression | 138.14 | 178.64 | **0.51** |
+| Random Forest    | 218.80 | 254.83 | 0.01     |
+| XGBoost          | 230.58 | 270.75 | -0.12    |
+| SARIMA           | 464.55 | 524.62 | -4.70    |
+| Prophet          | 486.34 | 539.48 | -4.98    |
 
 
 ---
 
 # Key Findings
 
-## 1. Simpler Models Generalized Better
+### Ridge Regression Outperformed More Complex Models
 
-Despite testing more complex models, Ridge Regression significantly outperformed Random Forest and XGBoost on unseen future data.
+Despite being the simplest model tested, Ridge Regression generalized substantially better than Random Forest, XGBoost, SARIMA, and Prophet.
 
-This suggests neighborhood crime activity is driven primarily by stable historical patterns rather than highly complex nonlinear relationships.
-
----
-
-## 2. Feature Engineering Was Critical
-
-Additional forecasting features improved Ridge Regression performance from:
-
-```text
-R² = 0.44
-```
-
-to:
-
-```text
-R² = 0.51
-```
-
-demonstrating the importance of capturing seasonality and long-term historical trends.
+This indicates that neighborhood crime patterns were largely driven by linear relationships and historical crime momentum rather than highly complex nonlinear interactions.
 
 ---
 
-## 3. Traditional Forecasting Models Performed Poorly
+### Time-Series Models Performed Poorly
 
-Both SARIMA and Prophet produced negative R² scores.
+SARIMA and Prophet produced extremely poor results.
 
-This indicates that neighborhood-level crime forecasting benefits from engineered temporal features and neighborhood information rather than relying solely on historical crime counts.
+Possible reasons include:
 
----
+- Limited history (5 years)
+- Structural shifts in crime reporting
+- Neighborhood-level variability
+- Aggregation effects
 
-## 4. Historical Crime Activity Is Predictive
-
-Features such as:
-
-```text
-lag_12
-rolling_12
-crime_trend
-```
-
-provided valuable information for forecasting future crime activity.
+This demonstrates that classical forecasting methods are not always superior to machine learning approaches.
 
 ---
 
-# Translating Model Performance into Business Value
+### Feature Engineering Was Critical
 
-An R² of 0.51 does not mean predictions are perfect.
+Lag features, rolling averages, trend indicators, and seasonal variables significantly improved performance.
 
-However, it indicates the model can explain over half of the variation in future neighborhood crime activity.
+The model's strongest predictor of future crime was often its historical crime activity.
 
-For investors, this creates actionable value by:
+---
 
-### Identifying Higher-Risk Neighborhoods
+# 2025 Neighborhood Crime Forecasts
 
-Areas exhibiting rising crime trends can be flagged for additional investigation.
+After selecting Ridge Regression as the final model, it was retrained using all available historical data from 2020–2024 and used to generate neighborhood crime forecasts for 2025.
 
-### Prioritizing Safer Opportunities
+These forecasts provide Morro's Real Estate Investment Firm with forward-looking risk assessments that can be incorporated into investment decisions.
 
-Neighborhoods with stable or declining crime forecasts may represent stronger investment candidates.
+---
 
-### Supporting Capital Allocation Decisions
+## Highest Predicted Crime Neighborhoods (2025)
 
-Forecasted crime trends can become an additional factor within investment evaluation frameworks.
 
-### Reducing Subjectivity
+| Neighborhood    | Avg Monthly Crime | Annual Forecast |
+| --------------- | ----------------- | --------------- |
+| Central         | 469.11            | 5,629           |
+| Pacific         | 363.55            | 4,363           |
+| Southwest       | 289.73            | 3,477           |
+| North Hollywood | 249.34            | 2,992           |
+| Harbor          | 237.37            | 2,848           |
 
-Investment decisions become increasingly data-driven rather than intuition-based.
+
+### Business Interpretation
+
+These neighborhoods are forecasted to experience the highest crime activity in 2025.
+
+This does not necessarily eliminate investment opportunities but suggests increased due diligence should be performed regarding:
+
+- Tenant demand
+- Property appreciation potential
+- Insurance costs
+- Local development activity
+- Crime mitigation initiatives
+
+---
+
+## Lowest Predicted Crime Neighborhoods (2025)
+
+
+| Neighborhood | Avg Monthly Crime | Annual Forecast |
+| ------------ | ----------------- | --------------- |
+| Foothill     | 108.48            | 1,302           |
+| West Valley  | 156.11            | 1,873           |
+| Southeast    | 162.49            | 1,950           |
+| 77th Street  | 163.69            | 1,964           |
+| Mission      | 171.67            | 2,060           |
+
+
+### Business Interpretation
+
+These neighborhoods are forecasted to experience comparatively lower crime activity in 2025 and may represent attractive investment opportunities when combined with favorable economic and housing indicators.
+
+---
+
+# Translating Model Metrics into Business Value
+
+An R² score of **0.51** means the model explains approximately **51% of future crime variation across neighborhoods**.
+
+While not perfect, this level of predictive power is meaningful in a highly complex social system such as crime forecasting.
+
+For investors, the model provides:
+
+- Early identification of higher-risk neighborhoods
+- Relative ranking of neighborhoods by projected risk
+- Better-informed acquisition decisions
+- Additional context during due diligence
+
+The goal is not perfect prediction but improved decision-making.
 
 ---
 
 # Recommendations
 
-## Short-Term
+### Immediate Recommendations
 
-Incorporate forecasted crime trends into neighborhood screening processes.
+- Prioritize further investigation of lower-risk neighborhoods.
+- Apply enhanced due diligence to higher-risk neighborhoods.
+- Combine forecasts with property valuation metrics.
+- Incorporate rental demand and vacancy data.
 
-Use crime forecasts alongside:
+### Future Enhancements
 
-- Property values
-- Rental yields
-- Vacancy rates
-- Population growth
-
----
-
-## Medium-Term
-
-Develop neighborhood risk scores based on:
-
-```text
-Predicted Crime Level
-Crime Trend
-Historical Volatility
-```
-
-to simplify investment decision-making.
-
----
-
-## Long-Term
-
-Create an automated forecasting dashboard that updates monthly as new crime data becomes available.
-
-Potential enhancements include:
-
-- Interactive maps
-- Neighborhood rankings
-- Risk alerts
-- Portfolio-level risk analysis
+- Include demographic information.
+- Add economic indicators.
+- Incorporate housing market trends.
+- Add unemployment statistics.
+- Expand historical coverage beyond 2020.
+- Integrate geographic crime hotspot analysis.
 
 ---
 
 # Limitations
 
-## Data Quality
+Several limitations should be considered:
 
-The source crime dataset is publicly available and may contain:
+### Data Quality
 
-- Reporting delays
-- Missing incidents
-- Data revisions
+The Los Angeles crime dataset is preliminary and subject to revision.
 
-These factors can impact forecasting performance.
+### Limited Historical Window
 
----
+Only five years of historical data were available.
 
-## External Factors
+### External Factors
 
-Crime activity is influenced by many variables not included in the dataset:
+Crime is influenced by factors not included in this dataset:
 
 - Economic conditions
-- Housing markets
-- Policing strategies
 - Population shifts
 - Policy changes
+- Law enforcement strategies
+
+### Forecast Uncertainty
+
+Predictions represent expected trends rather than guaranteed outcomes.
 
 ---
 
-## Forecast Horizon
+# Repository Structure
 
-The model was evaluated using a one-year forecasting horizon.
-
-Performance may vary over longer forecasting periods.
+```text
+crimeproject/
+│
+├── crime_data_project/
+│   ├── crime.ipynb
+│   ├── Crime_Data_from_2020_to_2024.csv
+│   └── .gitignore
+│
+├── README.md
+├── requirements.txt
+└── .gitignore
+```
 
 ---
 
-## Geographic Scope
+# Installation & Setup
 
-Results are specific to Los Angeles neighborhoods and may not generalize to other cities without retraining.
+### Clone Repository
 
----
+```bash
+git clone https://github.com/marcoholt/crimeproject.git
+cd crimeproject
+```
 
-# Future Improvements
+### Create Virtual Environment
 
-Potential future enhancements include:
+```bash
+python -m venv venv
+```
 
-### Additional Data Sources
+Activate:
 
-- Economic indicators
-- Housing market data
-- Population demographics
-- Employment statistics
+Mac/Linux
 
-### Advanced Forecasting Approaches
+```bash
+source venv/bin/activate
+```
 
-- Global forecasting models
-- Temporal Fusion Transformers
-- LSTM Neural Networks
-- LightGBM Forecasting
+Windows
 
-### Explainability
+```bash
+venv\Scripts\activate
+```
 
-- SHAP values
-- Feature importance analysis
-- Neighborhood risk explanations
+### Install Dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+### Launch Notebook
+
+```bash
+jupyter notebook
+```
+
+Open:
+
+```text
+crime_data_project/crime.ipynb
+```
 
 ---
 
 # Conclusion
 
-This project demonstrates that historical crime data can be used to forecast future neighborhood crime activity and support real estate investment decision-making. Through extensive feature engineering, time-aware validation, and model comparison, Ridge Regression emerged as the strongest forecasting model, explaining approximately 51% of future crime variation across Los Angeles neighborhoods.
+This project demonstrates how machine learning can be used to support real estate investment decisions through crime forecasting. By combining historical crime patterns, advanced feature engineering, and predictive modeling, the final Ridge Regression model successfully identified neighborhood-level risk patterns and generated actionable 2025 crime forecasts.
 
-The results suggest that feature-engineered machine learning approaches outperform traditional forecasting models for neighborhood-level crime prediction and can provide valuable insights for identifying safer investment opportunities, reducing risk exposure, and supporting data-driven real estate investment strategies.
+The resulting forecasts provide Morro's Real Estate Investment Firm with a scalable, data-driven framework for evaluating neighborhood safety and incorporating crime risk into future investment decisions.
