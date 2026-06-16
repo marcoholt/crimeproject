@@ -462,3 +462,21 @@ crime_data_project/crime.ipynb
 This project demonstrates how machine learning can be used to support real estate investment decisions through crime forecasting. By combining historical crime patterns, advanced feature engineering, and predictive modeling, the final Ridge Regression model successfully identified neighborhood-level risk patterns and generated actionable 2025 crime forecasts.
 
 The resulting forecasts provide Morro's Real Estate Investment Firm with a scalable, data-driven framework for evaluating neighborhood safety and incorporating crime risk into future investment decisions.
+
+## Investment Recommendation
+
+Based on the 2025 crime forecasts, the following neighborhoods were projected to experience the lowest levels of crime activity:
+
+| Neighborhood | Predicted Annual Crime Count |
+|-------------|-----------------------------|
+| Foothill | 1,302 |
+| West Valley | 1,873 |
+| Southeast | 1,950 |
+| 77th Street | 1,964 |
+| Mission | 2,060 |
+
+From a crime-risk perspective, these neighborhoods may represent more attractive investment opportunities because they are forecasted to experience lower crime activity relative to other Los Angeles neighborhoods.
+
+Conversely, neighborhoods such as Central, Pacific, Southwest, North Hollywood, and Harbor were forecasted to experience the highest crime activity in 2025. While these areas should not automatically be excluded from consideration, investors should perform additional due diligence regarding tenant demand, insurance costs, property appreciation potential, and local development initiatives.
+
+Ultimately, this model is intended to support investment decision-making rather than replace it. Crime forecasts should be evaluated alongside housing market conditions, economic indicators, rental demand, and broader neighborhood development trends to create a comprehensive investment strategy.
