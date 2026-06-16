@@ -371,17 +371,13 @@ Predictions represent expected trends rather than guaranteed outcomes.
 
 # Repository Structure
 
-```text
+```
 crimeproject/
 │
-├── crime_data_project/
-│   ├── crime.ipynb
-│   ├── Crime_Data_from_2020_to_2024.csv
-│   └── .gitignore
-│
+├── .gitignore
 ├── README.md
-├── requirements.txt
-└── .gitignore
+├── crime.ipynb
+└── requirements.txt
 ```
 
 ---
